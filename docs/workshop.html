@@ -399,6 +399,35 @@ display.fillCircle(xPos - moonShadow, 2 * sunRadius, sunRadius, BLACK);</code></
       have drawn.
     </p>
   
+    <h2>Using sensors</h2>
+    <h3>Light sensor</h3>
+    <p>Maybe your Tamaquino doesn't like bright light? How would you program that? Well, you could use the included light sensor (LDO) to measure ambient light levels.
+      To do so, create a <i>voltage divider</i> by putting the LDO in series with another resistor, like in the diagram.
+      The voltage divider goes from 5V to GND. And the 'middle' connects to A0 (analog input 0), which is where we'll measure the voltage.
+      <img src='images/Tamaquino_LDR.svg' />
+    </p>
+    <p>
+      You can then for instance reduce the happiness while the light is too bright:
+    </p>
+    <pre><code>
+      // at the top
+      const int lightSensorPin = A0;
+      int lightValue = 0;
+
+      // in the loop
+      lightValue = analogRead(lightSensorPin);  // read the input pin
+      // Serial.print("light ");
+      // Serial.println(lightValue);
+      
+      if (lightValue > 600) {
+        happiness--;
+        if (happiness < 0) {
+          happiness = 0;
+        }
+      }
+    </code></pre>
+
+
     <h2>Troubleshooting</h2>
     <h3>[Error] Verifying sketch 'Tamaquino/Tamaquino.ino': Exit with code=1</h3>
     <p>If you have an error like this it is most likely you haven't installed the referenced library yet.</p>
