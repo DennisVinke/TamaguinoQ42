@@ -16,16 +16,12 @@
 const int button1Pin = 9;
 const int button2Pin = 8;
 const int button3Pin = 7;
-const int lightSensorPin = A0;
-
 const unsigned long dayNightCycleSeconds = 240;
 const int dayStartTime = 800;
 // Calculate the millis offset so our program always starts at dawn instead of
 // midnight
 const unsigned long millisOffset =
     dayStartTime / 2400.0 * dayNightCycleSeconds * 1000;
-
-bool sound = false;
 
 /* ------- PET STATS ------- */
 unsigned long previousUpdateTime = 0;
@@ -40,13 +36,10 @@ bool sleeping = false;
 float poopometer = 0;
 int poopCoordinates[3] = {0, 0, 0};
 
-int lightValue = 0;
-
 void setup() {
   pinMode(button1Pin, INPUT_PULLUP);
   pinMode(button2Pin, INPUT_PULLUP);
   pinMode(button3Pin, INPUT_PULLUP);
-  
 
   pinMode(13, OUTPUT);
 
@@ -59,15 +52,6 @@ void setup() {
 }
 
 void loop() {
-  lightValue = analogRead(lightSensorPin);  // read the input pin
-  // Serial.print("light ");
-  // Serial.println(lightValue);
-  if (lightValue > 600) {
-    happiness--;
-    if (happiness < 0) {
-      happiness = 0;
-    }
-  }
 
   if (dead) {
     drawDead();
@@ -84,12 +68,6 @@ void loop() {
   // Calculate game time from 0 to 2400
   int time = ((millis() + millisOffset) % (dayNightCycleSeconds * 1000)) *
              (2400.0 / (dayNightCycleSeconds * 1000.0));
-
-  if (digitalRead(12)) {
-    sound = true;
-  }
-
-  Serial.println(analogRead(0));
 
   // Update stats once per second
   if (previousUpdateTime + 1000 < millis()) {
@@ -135,11 +113,7 @@ void loop() {
     Serial.print(happiness);
     Serial.print('\t');
     Serial.print(poopometer);
-    Serial.print('\t');
-    Serial.print(sound);
     Serial.println();
-
-    sound = false;
 
     previousUpdateTime = millis();
   }
