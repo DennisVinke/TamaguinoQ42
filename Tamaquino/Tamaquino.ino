@@ -25,6 +25,8 @@ const int dayStartTime = 800;
 const unsigned long millisOffset =
     dayStartTime / 2400.0 * dayNightCycleSeconds * 1000;
 
+bool sound = false;
+
 /* ------- PET STATS ------- */
 unsigned long previousUpdateTime = 0;
 
@@ -83,6 +85,12 @@ void loop() {
   int time = ((millis() + millisOffset) % (dayNightCycleSeconds * 1000)) *
              (2400.0 / (dayNightCycleSeconds * 1000.0));
 
+  if (digitalRead(12)) {
+    sound = true;
+  }
+
+  Serial.println(analogRead(0));
+
   // Update stats once per second
   if (previousUpdateTime + 1000 < millis()) {
     if (energy > 0) {
@@ -127,7 +135,11 @@ void loop() {
     Serial.print(happiness);
     Serial.print('\t');
     Serial.print(poopometer);
+    Serial.print('\t');
+    Serial.print(sound);
     Serial.println();
+
+    sound = false;
 
     previousUpdateTime = millis();
   }

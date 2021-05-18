@@ -190,6 +190,7 @@
         <li><a href="#getting-started">Getting started</a></li>
         <li><a href="#customizing-software">Customizing the program</a></li>
         <li><a href="#using-sensors">Using sensors</a></li>
+        <li><a hreft="#troubleshooting">Troubleshooting</a></li>
       </ol>
     </nav>
 
@@ -354,7 +355,7 @@ display.fillCircle(xPos - moonShadow, 2 * sunRadius, sunRadius, BLACK);</code></
     </p>
     <img src="images/dino-sprite.jpg" width="100%" alt="Our Dino sprite!"/>
     <p>
-      You can easily replace or add sprites. If you have some pixelart skills, you can event create your own pet!
+      You can easily replace or add sprites. If you have some pixelart skills, you can even create your own pet!
       In case you don't, you can use an existing image and modify it a bit.
       If you then upload that image to <a href="http://javl.github.io/image2cpp/" target="_blank">image2cpp</a>,
       it can convert it to a byte array for you. The default settings should work fine. Make sure you
@@ -401,35 +402,62 @@ display.fillCircle(xPos - moonShadow, 2 * sunRadius, sunRadius, BLACK);</code></
     </p>
   
     <h2 id="using-sensors">Using sensors</h2>
+    <img src='images/Tamaquino_LDR_mic.svg' />
+
     <h3>Light sensor</h3>
     <p>Maybe your Tamaquino doesn't like bright light? How would you program that? Well, you could use the included light sensor (LDO) to measure ambient light levels.
-      To do so, create a <i>voltage divider</i> by putting the LDO in series with another resistor, like in the diagram.
+      To do so, create a <i>voltage divider</i> by putting the LDR in series with another resistor, like in the right part of the diagram above.
       The voltage divider goes from 5V to GND. And the 'middle' connects to A0 (analog input 0), which is where we'll measure the voltage.
-      <img src='images/Tamaquino_LDR.svg' />
+      
     </p>
     <p>
       You can then for instance reduce the happiness while the light is too bright:
     </p>
-    <pre><code>
-      // at the top
-      const int lightSensorPin = A0;
-      int lightValue = 0;
+    <pre><code>// at the top of your program
+const int lightSensorPin = A0;
+int lightValue = 0;
 
-      // in the loop
-      lightValue = analogRead(lightSensorPin);  // read the input pin
-      // Serial.print("light ");
-      // Serial.println(lightValue);
-      
-      if (lightValue > 600) {
-        happiness--;
-        if (happiness < 0) {
-          happiness = 0;
-        }
-      }
-    </code></pre>
+// in the stats update
+lightValue = analogRead(lightSensorPin);  // read the input pin
+// Serial.print("light ");
+// Serial.println(lightValue);
 
+if (lightValue > 600) {
+  happiness--;
+  if (happiness < 0) {
+    happiness = 0;
+  }
+}</code></pre>
 
-    <h2>Troubleshooting</h2>
+  <h3>Microphone</h3>
+  <p>
+    Giving attention to your pet can be done in multiple ways, you can also talk to it! Or maybe you want to be able to wake it up by making some noise.
+    That's why we included a little microphone you can connect to your Arduino. You can connect it to your Arduino like in left part of the diagram above. We suggest only using the digital output, since the analog
+    output needs some audio analysis on the Arduino which is not trivial to do. After connecting it you can adjust the little screw on the blue potmeter (most of the time you need to turn it counter-clockwise)
+    until one of the LEDs turns off. Right on the edge is where it will be sensitive to sounds you make. It's a bit finicky and the potmeter itself is very sensitive around that point, so be gentle! 
+  </p>
+  <p>
+    To be honest, it is not the most sensitive microphone you can get, so it might not respond as well to your voice as you would want. Try to be creative with how you use it!
+    Now we would surely miss a lot of sounds if we only read the sound value once every second, so to use this properly, you might do something like this:
+  </p>
+
+  <pre><code>// at the top of your program
+const int soundPin = 12;
+bool soundDetected = false;
+
+// at the top of your loop()
+if (digitalRead(soundPin)) {
+  soundDetected = true;
+}
+
+// in the stats update
+if (soundDetected) {
+  // update some statistics based on sound
+
+  soundDetected = false;
+}</code></pre>
+
+    <h2 id="troubleshooting">Troubleshooting</h2>
     <h3>[Error] Verifying sketch 'Tamaquino/Tamaquino.ino': Exit with code=1</h3>
     <p>If you have an error like this it is most likely you haven't installed the referenced library yet.</p>
 <pre><code>Verifying...
@@ -443,14 +471,14 @@ display.fillCircle(xPos - moonShadow, 2 * sunRadius, sunRadius, BLACK);</code></
   <p>In this case the SSD1306 library needs to be installed.</p>
 
     <h3>Error: No such file or directory, cannot open /dev/tty.usbmodem142101</h3>
-    <p>When using Arduino for Visual Studio Code you may need to set the serial port in `.vscode/arduino.json` as follows:
+    <p>When using Arduino for Visual Studio Code you may need to set the serial port. You can do this by running the 'Arduino: Select Serial Port' command, or by editing <code>.vscode/arduino.json</code> as follows:</p>
       
-      <pre><code>      {
-          "board": "arduino:avr:uno",
-          "sketch": "Tamaquino/Tamaquino.ino",
-          "port": "/dev/tty.usbmodem143101"
-      }</code></pre>
-    </p>
+      <pre><code>{
+    "board": "arduino:avr:uno",
+    "sketch": "Tamaquino/Tamaquino.ino",
+    "port": "/dev/tty.usbmodem143101"
+}</code></pre>
+
   </div>
 </div>
 
