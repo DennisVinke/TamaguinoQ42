@@ -1,5 +1,6 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "Dino.h"
 
 #define OLED_RESET 4
 Adafruit_SSD1306 display(128, 64);
@@ -73,7 +74,12 @@ void drawCloud() {
 }
 
 void drawMountains() { display.drawBitmap(0, 7, mountains, 128, 16, WHITE); }
-
+void drawDino(Dino dino){
+  display.drawBitmap(dino.posX, dino.posY,
+                     dino.dir ? dinoWalkRight[walkIndex]
+                               : dinoWalkLeft[walkIndex],
+                     48, 24, WHITE);
+  }
 void drawDino(float walkingSpeed) {
   int walkIndex = round(walkXPos) % 6;
   int drawY = sleeping || walkingSpeed == 0 ? 29 : 26;
